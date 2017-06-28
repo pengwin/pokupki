@@ -10,6 +10,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+     "pg": "6.x"
   },
   "license": "MIT"
 }
