@@ -1,1 +1,2 @@
-web: node index.js
+web: npm start
+migrate: npm run migrate

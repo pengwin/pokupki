@@ -1,12 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const pg = require('pg');
-const url = require('url');
+
 
 const staticPath = './public';
 const port = process.env.PORT || 3000;
-const databaseUrl = process.env.DATABASE_URL || 3000;
+
 
 function getFilePath(url) {
   if (url === '/') {
@@ -56,48 +55,40 @@ function handleFileRequest(request, response) {
   });
 }
 
+const query = {
+  // give the query a unique name
+  name: 'fetch-user',
+  text: 'INSERT INTO test_table(id, email) VALUES($1, $2)',
+  values: [1]
+};
+
 function handleApiRequest(pool, request, response) {
-  pool.connect().then(client => {
-    client.query('SELECT * FROM test_table')
+    pool.query('SELECT * FROM test_table')
       .then(res => {
-        //client.release()
         response.end(JSON.stringify({ results: res.rows }), 'utf-8');
       })
       .catch(err => {
-        //client.release();
         if (err) {
           console.error(err);
           response.writeHead(500);
-          response.end(`Query error: ${e.message}, ${e.stack}`);
+          response.end(`Query error: ${err.message}, ${err.stack}`);
           response.end();
           return;
         }
       });
-  }).catch(err => {
-    if (err) {
-      console.error(err);
-      response.writeHead(500);
-      response.end(`Connect error: ${err.message}, ${err.stack}`);
-      response.end();
-      return;
-    }
-  });
 }
 
-const params = url.parse(databaseUrl);
-const auth = params.auth.split(':');
 
-const config = {
-  user: auth[0],
-  password: auth[1],
-  host: params.hostname,
-  port: params.port,
-  database: params.pathname.split('/')[1],
-  ssl: true,
-  max: 20
-};
 
-const pool = new pg.Pool(config);
+pool.on('error', function (err, client) {
+  // if an error is encountered by a client while it sits idle in the pool
+  // the pool itself will emit an error event with both the error and
+  // the client which emitted the original error
+  // this is a rare occurrence but can happen if there is a network partition
+  // between your application and the database, the database restarts, etc.
+  // and so you might want to handle it and at least log it out
+  console.error('idle client error', err.message, err.stack);
+});
 
 const server = http.createServer((request, response) => {
   console.log(`Handle request ${request.url}`);
