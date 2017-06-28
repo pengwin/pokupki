@@ -1,0 +1,15 @@
+{
+  "name": "pokupki",
+  "version": "0.0.1",
+  "description": "Application for managing shopping lists",
+  "engines": {
+    "node": "6.10.2"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+  },
+  "license": "MIT"
+}
