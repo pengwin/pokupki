@@ -1,20 +1,20 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+import * as http from 'http';
+import fs from 'fs';
+import path from 'path';
 
+import { handleApiRequest } from './apiHandler';
 
 const staticPath = './public';
 const port = process.env.PORT || 3000;
 
-
-function getFilePath(url) {
+function getFilePath(url: string) {
   if (url === '/') {
     url = 'index.html';
   }
   return path.join(staticPath, url);
 }
 
-function getContentType(filePath) {
+function getContentType(filePath: string) {
   let extname = path.extname(filePath);
   switch (extname) {
     case '.js':
@@ -55,47 +55,14 @@ function handleFileRequest(request, response) {
   });
 }
 
-const query = {
-  // give the query a unique name
-  name: 'fetch-user',
-  text: 'INSERT INTO test_table(id, email) VALUES($1, $2)',
-  values: [1]
-};
-
-function handleApiRequest(pool, request, response) {
-    pool.query('SELECT * FROM test_table')
-      .then(res => {
-        response.end(JSON.stringify({ results: res.rows }), 'utf-8');
-      })
-      .catch(err => {
-        if (err) {
-          console.error(err);
-          response.writeHead(500);
-          response.end(`Query error: ${err.message}, ${err.stack}`);
-          response.end();
-          return;
-        }
-      });
-}
-
-
-
-pool.on('error', function (err, client) {
-  // if an error is encountered by a client while it sits idle in the pool
-  // the pool itself will emit an error event with both the error and
-  // the client which emitted the original error
-  // this is a rare occurrence but can happen if there is a network partition
-  // between your application and the database, the database restarts, etc.
-  // and so you might want to handle it and at least log it out
-  console.error('idle client error', err.message, err.stack);
-});
-
 const server = http.createServer((request, response) => {
   console.log(`Handle request ${request.url}`);
 
-  if (request.url.indexOf('/api') > -1) {
-    handleApiRequest(pool, request, response);
-    return;
+  if (request.url && request.url.indexOf('/api') > -1) {
+    return handleApiRequest(request.url).then(res => {
+      response.writeHead(res.status || 200, { 'Content-Type': 'application/json' });
+      response.end(res.content, 'utf-8');
+    });
   }
 
   handleFileRequest(request, response);

@@ -5,17 +5,20 @@
   "engines": {
     "node": "6.10.2"
   },
-  "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "postinstall": "tsc",
+    "start": "node ./build/server/server.js",
     "add_migration": "db-migrate create",
     "add_sql_migration": "db-migrate create --sql-file",
     "migrate": "db-migrate up"
   },
   "dependencies": {
+    "@types/node": "8.0.5",
+    "@types/pg": "6.1.41",
     "db-migrate": "0.10.0-beta.20",
     "db-migrate-pg": "0.2.4",
-    "pg": "6.4.0"
+    "pg": "6.4.0",
+    "typescript": "2.4.1"
   },
   "license": "MIT"
 }
