@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Application for managing shopping lists",
   "engines": {
-    "node": "6.10.2"
+    "node": "8.1.3"
   },
   "scripts": {
     "postinstall": "npm run build",
@@ -11,9 +11,10 @@
     "add_migration": "db-migrate create",
     "add_sql_migration": "db-migrate create --sql-file",
     "migrate": "db-migrate up",
-    "build": "npm run lint && npm run compile",
-    "compile": "tsc",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "build": "node ./buildServer.js",
+    "compile": "tsc -p tsconfig.json",
+    "lint_fix": "tslint -c tslint.json --fix 'src/**/*.ts'",
+    "lint": "tslint -t stylish -c tslint.json -p tsconfig.json --type-check --fix 'src/**/*.ts'"
   },
   "dependencies": {
     "@types/hapi": "16.1.6",
