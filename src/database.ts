@@ -55,5 +55,5 @@ function createPool(configFn: () => pg.PoolConfig): pg.Pool {
     Logger.error('idle client error', err.message, err.stack);
   });
 
-  return pool;
+  return newPool;
 }
