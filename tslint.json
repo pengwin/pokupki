@@ -6,11 +6,27 @@
     ],
     "jsRules": {},
     "rules": {
+        "indent": [true, "spaces", 4],
         "quotemark": [true, "single"],
         "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
         "object-literal-sort-keys": false,
         "interface-name": [false],
-        "arrow-parens": false
+        "arrow-parens": false,
+
+        // Recommended built-in rules 
+        "no-var-keyword": true,
+    
+        // Immutability rules 
+        "readonly-keyword": true,
+        "readonly-array": true,
+        "no-let": true,
+    
+        // Functional style rules 
+        "no-this": false,
+        "no-class": false,
+        "no-new": false,
+        "no-mixed-interface": false,
+        "no-expression-statement": true
     },
     "rulesDirectory": []
 }

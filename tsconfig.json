@@ -16,6 +16,6 @@
         "ES2015"
     ],
     "files": [
-        "src/server.ts"
+        "src/server/index.ts"
     ]
 }
