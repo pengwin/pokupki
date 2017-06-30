@@ -1,6 +1,8 @@
 import * as db from './database';
+import * as Hapi from 'hapi';
+import * as pg from 'pg';
 
-function insertEventQuery(type, payload) {
+function insertEventQuery(type: string, payload: any) {
     return {
         text: 'INSERT INTO event(type, payload) VALUES($1, $2);',
         values: [type, payload]
@@ -14,36 +16,28 @@ function getAllEventsQuery() {
     };
 };
 
-function insertEvent(type, payload) {
-    let query = insertEventQuery(type, payload);
-    return db.query(query);
+
+function mapQueryResult(queryResult) {
+    return queryResult.rows;
 }
 
-class HandlerResult {
-    get content() { return this._content; }
-    get status() { return this._status; }
-
-    constructor(private _content: string, private _status?: number) { }
-}
-
-function sqlQuery(query): Promise<HandlerResult> {
+function sqlQuery(query: pg.QueryConfig, reply: Hapi.ReplyNoContinue): Promise<Hapi.Response> {
     return db.query(query)
-        .then(res => new HandlerResult(JSON.stringify({ results: res.rows })))
-        .catch(err => new HandlerResult(`Query error: ${err.message}, ${err.stack}`, 500));
+        .then(res => reply.response(mapQueryResult(res)))
+        .catch(err => {
+            let error = new Error(`Query ${query.text} error: ${err.message}, ${err.stack}`);
+            console.log(error);
+            return reply(error);
+        });
 }
 
-const handlers = {
-    '/api/insert': () => sqlQuery(insertEvent('test', { q: 1 })),
-    '/api/getall': () => sqlQuery(getAllEventsQuery())
-};
-
-function handleApiRequest(url: string): Promise<HandlerResult> {
-    let handler = handlers[url];
-    if (!handler) {
-        return Promise.resolve(new HandlerResult(`Not found ${url}`, 404))
-    }
-
-    return handler();
+interface Event {
+    type: string;
+    payload: any;
 }
 
-export {handleApiRequest};
+const insertHandler = (request: Hapi.Request, reply: Hapi.ReplyNoContinue) => sqlQuery(insertEventQuery(request.payload.type, request.payload.payload), reply);
+const getAllHandler = (request: Hapi.Request, reply: Hapi.ReplyNoContinue) => sqlQuery(getAllEventsQuery(), reply);
+
+export { insertHandler };
+export { getAllHandler };

@@ -1,78 +1,97 @@
-import * as http from 'http';
-import fs from 'fs';
-import path from 'path';
+import * as Hapi from 'hapi';
+import * as path from 'path';
 
-import { handleApiRequest } from './apiHandler';
+import { insertHandler, getAllHandler } from './apiHandler';
 
 const staticPath = './public';
 const port = process.env.PORT || 3000;
 
-function getFilePath(url: string) {
-  if (url === '/') {
-    url = 'index.html';
+const server = new Hapi.Server({
+  debug: {
+    log: ['error']
   }
-  return path.join(staticPath, url);
-}
+});
+server.connection({ port: port });
 
-function getContentType(filePath: string) {
-  let extname = path.extname(filePath);
-  switch (extname) {
-    case '.js':
-      return 'text/javascript';
-    case '.css':
-      return 'text/css';
-    case '.json':
-      return 'application/json';
-    case '.png':
-      return 'image/png';
-    case '.jpg':
-      return 'image/jpg';
-    default:
-      return 'text/html';
-  }
-}
-
-function handleFileRequest(request, response) {
-
-  let filePath = getFilePath(request.url);
-  let contentType = getContentType(filePath);
-
-  fs.readFile(filePath, (error, content) => {
-    if (error) {
-      if (error.code == 'ENOENT') {
-        response.writeHead(404, 'NOT FOUND');
-        response.end(`Couldn't find ${request.url}`);
-        return;
+function registerStaticServing(server) {
+  server.route({
+    method: 'GET',
+    path: '/{param*}',
+    handler: {
+      directory: {
+        path: staticPath,
+        index: true
       }
-      response.writeHead(500);
-      response.end('Sorry, check with the site admin for error: ' + error.code + ' ..\n');
-      response.end();
-      return;
+    },
+    config: {
+      description: 'Gets static content from server',
+      notes: 'Returns file content',
+      tags: ['static']
     }
-
-    response.writeHead(200, { 'Content-Type': contentType });
-    response.end(content, 'utf-8');
   });
 }
 
-const server = http.createServer((request, response) => {
-  console.log(`Handle request ${request.url}`);
+function registerInsertEvent(server: Hapi.Server) {
+  server.route({
+    method: 'POST',
+    path: '/api/event',
+    handler: insertHandler,
+    config: {
+      description: 'Adds new event to event store',
+      notes: 'Handles object with structure {type: string, payload: object}',
+      tags: ['api', 'event']
+    }
+  });
+}
 
-  if (request.url && request.url.indexOf('/api') > -1) {
-    return handleApiRequest(request.url).then(res => {
-      response.writeHead(res.status || 200, { 'Content-Type': 'application/json' });
-      response.end(res.content, 'utf-8');
-    });
+function registerGetAllEvents(server) {
+  server.route({
+    method: 'GET',
+    path: '/api/events',
+    handler: getAllHandler,
+    config: {
+      description: 'Gets all events from store',
+      notes: 'Returns {id: serial, type: string, payload: object, created: date}',
+      tags: ['api', 'event']
+    }
+  });
+}
+
+const loggingOptions = {
+  ops: {
+    interval: 1000
+  },
+  reporters: {
+    consoleReporter: [{
+      module: 'good-squeeze',
+      name: 'Squeeze',
+      args: [{ log: '*', response: '*' }]
+    }, {
+      module: 'good-console'
+    }, 'stdout']
   }
+};
 
-  handleFileRequest(request, response);
-});
 
-server.on('clientError', (err, socket) => {
-  socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
-});
-server.listen(port);
+server.register([
+  { register: require('inert') },
+  { register: require('good'), options: loggingOptions }], (err) => {
+    if (err) {
+      throw err;
+    }
 
-console.log(`Listening on ${port}`);
+    registerStaticServing(server);
+    registerGetAllEvents(server);
+    registerInsertEvent(server);
 
+    server.start((err) => {
+      if (err) {
+        throw err;
+      }
+      if (server.info) {
+        console.log('Server running at:', server.info.uri);
+      }
+    });
+
+  });
 
