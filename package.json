@@ -6,11 +6,14 @@
     "node": "6.10.2"
   },
   "scripts": {
-    "postinstall": "tsc",
+    "postinstall": "npm run build",
     "start": "node ./build/server/server.js",
     "add_migration": "db-migrate create",
     "add_sql_migration": "db-migrate create --sql-file",
-    "migrate": "db-migrate up"
+    "migrate": "db-migrate up",
+    "build": "npm run lint && npm run compile",
+    "compile": "tsc",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "@types/hapi": "16.1.6",
@@ -24,6 +27,9 @@
     "hapi": "16.4.3",
     "inert": "4.2.0",
     "pg": "6.4.0",
+    "tslint": "5.4.3",
+    "tslint-eslint-rules": "4.1.1",
+    "tslint-immutable": "4.0.1",
     "typescript": "2.4.1"
   },
   "license": "MIT"

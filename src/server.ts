@@ -1,7 +1,8 @@
 import * as Hapi from 'hapi';
 import * as path from 'path';
+import { Logger } from './logger';
 
-import { insertHandler, getAllHandler } from './apiHandler';
+import { getAllHandler, insertHandler } from './apiHandler';
 
 const staticPath = './public';
 const port = process.env.PORT || 3000;
@@ -11,10 +12,10 @@ const server = new Hapi.Server({
     log: ['error']
   }
 });
-server.connection({ port: port });
+server.connection({ port });
 
-function registerStaticServing(server) {
-  server.route({
+function registerStaticServing(serverInstance: Hapi.Server) {
+  serverInstance.route({
     method: 'GET',
     path: '/{param*}',
     handler: {
@@ -31,29 +32,21 @@ function registerStaticServing(server) {
   });
 }
 
-function registerInsertEvent(server: Hapi.Server) {
-  server.route({
-    method: 'POST',
-    path: '/api/event',
+function registerInsertEvent(serverInstance: Hapi.Server) {
+  serverInstance.route({
+    config: insertHandler.config,
     handler: insertHandler,
-    config: {
-      description: 'Adds new event to event store',
-      notes: 'Handles object with structure {type: string, payload: object}',
-      tags: ['api', 'event']
-    }
+    method: 'POST',
+    path: '/api/event'
   });
 }
 
-function registerGetAllEvents(server) {
-  server.route({
-    method: 'GET',
-    path: '/api/events',
+function registerGetAllEvents(serverInstance: Hapi.Server) {
+  serverInstance.route({
+    config: getAllHandler.config,
     handler: getAllHandler,
-    config: {
-      description: 'Gets all events from store',
-      notes: 'Returns {id: serial, type: string, payload: object, created: date}',
-      tags: ['api', 'event']
-    }
+    method: 'GET',
+    path: '/api/events'
   });
 }
 
@@ -72,7 +65,6 @@ const loggingOptions = {
   }
 };
 
-
 server.register([
   { register: require('inert') },
   { register: require('good'), options: loggingOptions }], (err) => {
@@ -84,14 +76,13 @@ server.register([
     registerGetAllEvents(server);
     registerInsertEvent(server);
 
-    server.start((err) => {
-      if (err) {
-        throw err;
+    server.start((startErr) => {
+      if (startErr) {
+        throw startErr;
       }
       if (server.info) {
-        console.log('Server running at:', server.info.uri);
+        Logger.info('Server running at:', server.info.uri);
       }
     });
 
   });
-

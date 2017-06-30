@@ -34,9 +34,9 @@
             return response.json();
         })
         .then(function (events) {
-            let evenstHtml = events.map(x => `<tr><td>${x.id}</td><td>${x.type}</td><td>${JSON.stringify(x.payload)}</td><td>${x.created}</td>`).join('\n');
+            let evenstHtml = events.map(x => `<tr><td>${x.id}</td><td>${x.type}</td><td>${x.version}</td><td>${JSON.stringify(x.payload)}</td><td>${x.created}</td>`).join('\n');
             let table = document.createElement('div');
-            table.innerHTML = `<table><thead><tr><th>id</th><th>type</th><th>payload</th><th>created</th></tr></thead><tbody>${evenstHtml}</tbody></table>`;
+            table.innerHTML = `<table><thead><tr><th>id</th><th>type</th><th>version</th><th>payload</th><th>created</th></tr></thead><tbody>${evenstHtml}</tbody></table>`;
             document.body.appendChild(table);
         })
         .catch(alert);
