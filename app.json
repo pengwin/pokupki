@@ -1,0 +1,20 @@
+{
+  "name": "pokupki",
+  "scripts": {
+  },
+  "env": {
+    "PGSSLMODE": {
+      "required": true
+    }
+  },
+  "formation": {
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
