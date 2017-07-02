@@ -40,7 +40,6 @@ async function build() {
         await runBuildStep('Fixing style...', 'lint_fix');
         await runBuildStep('Linting...', 'lint');
         await runBuildStep('Compiling...', 'compile');
-        await runBuildStep('Testing...', 'test');
     } catch (err) {
         process.stdout.write("error\n");
         if (err.out) {
@@ -49,6 +48,7 @@ async function build() {
         }
         console.error('STDERR:');
         console.error(err.error.toString());
+        process.exit(1);
     }
 }
 

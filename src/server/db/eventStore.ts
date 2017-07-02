@@ -3,23 +3,24 @@ import { Database } from './database';
 
 function insertEventQuery(event: EventSaveModel) {
     return {
-        text: 'INSERT INTO event(type, version, payload) VALUES($1, $2, $3);',
-        values: [event.type, event.version, event.payload]
+        text: 'INSERT INTO events(type, version, payload, user_id) VALUES($1, $2, $3, $4);',
+        values: [event.type, event.version, event.payload, event.userId]
     };
 }
 
-function getAllEventsQuery() {
+function getAllEventsQuery(userId: string) {
     return {
-        name: 'get_all_events',
-        text: 'SELECT * FROM event;'
+        name: `get_all_events_${userId}`,
+        text: 'SELECT * FROM events WHERE user_id = $1;',
+        values: [userId]
     };
 }
 
 export class EventStore {
     constructor(private db: Database) { }
 
-    public getAll() {
-        return this.db.query(getAllEventsQuery()).then(rows => rows.map(row => this.mapRow(row)));
+    public getAll(userId: string) {
+        return this.db.query(getAllEventsQuery(userId)).then(rows => rows.map(row => this.mapRow(row)));
     }
 
     public insert(event: EventSaveModel) {
@@ -32,19 +33,23 @@ export class EventStore {
 
     private validateEvent(event: EventSaveModel) {
         if (!event) {
-            throw new Error('Event is empty');
+             return Promise.reject(new Error('Event is empty'));
         }
 
         if (!event.type) {
-            throw new Error('Event type is not defined');
+            return Promise.reject(new Error('Event type is not defined'));
         }
 
         if (!event.version) {
-            throw new Error('Event version is not defined');
+            return Promise.reject(new Error('Event version is not defined'));
+        }
+
+        if (!event.userId) {
+            return Promise.reject(new Error('Event userId is not defined'));
         }
 
         if (!event.payload) {
-            throw new Error('Event payload is not defined');
+            return Promise.reject(new Error('Event payload is not defined'));
         }
 
         return Promise.resolve(event);
@@ -54,6 +59,7 @@ export class EventStore {
         return {
             id: row.id,
             type: row.type,
+            userId: row.user_id,
             payload: row.payload,
             version: row.version,
             created: row.created

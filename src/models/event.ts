@@ -1,6 +1,7 @@
 export interface EventSaveModel {
     readonly type: string;
     readonly version: string;
+    readonly userId: string;
     readonly payload: any;
 }
 

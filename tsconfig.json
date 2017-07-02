@@ -3,13 +3,15 @@
         "module": "commonjs",
         "target": "es6",
         "moduleResolution": "Node",
-        "outDir": "build/server",
+        "outDir": "build",
         "noImplicitAny": true,
-        "allowSyntheticDefaultImports": true,
+        "allowSyntheticDefaultImports": false,
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true
     },
     "lib": [
         "ES5",

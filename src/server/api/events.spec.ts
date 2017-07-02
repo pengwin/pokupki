@@ -1,12 +1,12 @@
 /* tslint:disable:no-expression-statement */
 
-import { ApiEventHandler } from './apiHandlers';
-import { EventStore } from './db/eventStore';
+import { EventStore } from '../db/eventStore';
+import { ApiEventHandler } from './events';
 
 function mockStore(allEvents) {
     return {
         getAll: jest.fn().mockReturnValue(Promise.resolve(allEvents)),
-        insert: jest.fn()
+        insert: jest.fn().mockReturnValue(Promise.resolve([]))
     };
 }
 
@@ -26,20 +26,22 @@ test('should expose insert handler', async () => {
     expect(handler.insertHandler.handler).toBeInstanceOf(Function);
 });
 
-test('should expose insert handler', async () => {
-    const expectedResult: ReadonlyArray<any> = [{a: 2}];
-    const store = mockStore(expectedResult) as any as EventStore;
+test('should response on insert', async () => {
+    const store = mockStore(null) as any as EventStore;
     const handler = new ApiEventHandler(store);
     const replyMock: any = (error) => fail(error);
     replyMock.response = (data) => data;
-    const result: any = await handler.allHandler.handler({
+    const result: any = await handler.insertHandler.handler({
+        auth: {
+            credentials: {
+                id: '1'
+            }
+        },
         payload: {
             type: 'test',
             version: 'version',
-            payload: {q: 1}
+            payload: { q: 1 }
         }
     }, replyMock);
     expect(result).toBeDefined();
-    expect(result.length).toEqual(1);
-    expect(result[0].a).toEqual(2);
 });

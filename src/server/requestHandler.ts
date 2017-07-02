@@ -1,7 +1,16 @@
 type HTTP_METHODS = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
 
+interface Creadentials {
+    readonly id: string;
+}
+
+interface Auth {
+    readonly credentials?: Creadentials;
+}
+
 export interface Request {
     readonly payload: any;
+    readonly auth?: Auth;
 }
 
 export interface Response {
@@ -20,6 +29,7 @@ export interface HandlerMetaData {
     readonly description: string;
     readonly notes: string;
     readonly tags: ReadonlyArray<string>;
+    readonly auth?: string;
 }
 
 export interface RequestHandler {

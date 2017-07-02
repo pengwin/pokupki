@@ -61,7 +61,6 @@ class Database {
             host: params.hostname,
             port,
             database: params.pathname.split('/')[1],
-            ssl: !!ssl,
             max: maxConnections || 10
         };
     }

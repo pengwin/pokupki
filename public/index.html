@@ -10,27 +10,44 @@
 </body>
 
 <script>
-    document.querySelector('button').addEventListener('click', () => click());
+    fetch('/api/login', {
+        method: 'post',
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({ name: 'default2', password: 'password' })
+    })
+        .then(res => res.json())
+        .then(function (data) {
+            console.log(data.token);
 
-    function click() {
-        fetch('/api/event', {
-            method: 'post',
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify({ type: 'test1', version: '1', payload: { q: 2 } })
-        })
-            .then(json)
-            .then(function (data) {
-                console.log('Request succeeded with JSON response', data);
-            })
-            .catch(function (error) {
-                console.log('Request failed', error);
+            document.querySelector('button').addEventListener('click', () => click());
+
+            function click() {
+                fetch('/api/event', {
+                    method: 'post',
+                    headers: {
+                        "Content-type": "application/json",
+                        "authorization": data.token
+                    },
+                    body: JSON.stringify({ type: 'test', version: '1', payload: { q: 2 } })
+                })
+                    .then(res => res.json())
+                    .then(function (data) {
+                        console.log('Request succeeded with JSON response', data);
+                    })
+                    .catch(function (error) {
+                        console.log('Request failed', error);
+                    });
+            }
+
+            return fetch('/api/events', {
+                method: 'get',
+                headers: {
+                    "authorization": data.token
+                }
             });
-    }
-
-    fetch('/api/events')
-        .then(function (response) {
+        }).then(function (response) {
             return response.json();
         })
         .then(function (events) {

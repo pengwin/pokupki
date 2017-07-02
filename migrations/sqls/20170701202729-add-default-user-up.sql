@@ -1,0 +1,1 @@
+SELECT add_user('default', 'password');

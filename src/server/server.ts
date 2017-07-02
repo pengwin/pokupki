@@ -1,13 +1,15 @@
 import * as Hapi from 'hapi';
 import * as path from 'path';
-import { Logger } from '../utils/logger';
 
+import { Logger } from '../utils/logger';
+import { AuthProvider } from './auth/authProvider';
 import { HandlerMetaData, RequestHandler, RequestHandlerFunction } from './requestHandler';
 
 interface Request {
     readonly url: string;
     readonly method: string;
     readonly payload?: any;
+    readonly headers?: any;
 }
 
 export class HapiServer {
@@ -17,11 +19,12 @@ export class HapiServer {
         // tslint:disable-next-line:no-expression-statement
         this.server = new Hapi.Server({
             debug: {
-                log: ['error']
+                log: ['error'],
+                request: ['error']
             }
         });
         // tslint:disable-next-line:no-expression-statement
-        this.server.connection({port});
+        this.server.connection({ port });
     }
 
     public enableStaticServing(staticPath: string) {
@@ -62,6 +65,10 @@ export class HapiServer {
         };
 
         return this.registerPlugin({ register: require('good'), options: loggingOptions });
+    }
+
+    public enableAuth(authProvider: AuthProvider) {
+        return authProvider.registerAuth(this.server).then(() => this);
     }
 
     public registerHandler(handler: RequestHandler) {
@@ -107,7 +114,8 @@ export class HapiServer {
         return {
             tags: metaData.tags.slice(),
             description: metaData.description,
-            notes: metaData.notes
+            notes: metaData.notes,
+            auth: metaData.auth || false
         };
     }
 
