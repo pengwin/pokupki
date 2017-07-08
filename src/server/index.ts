@@ -9,7 +9,7 @@ import { EventStore } from './db/eventStore';
 import { UserStore } from './db/userStore';
 import { HapiServer } from './server';
 
-const staticPath = './public';
+const staticPath = './build/client';
 const port = Number(process.env.PORT) || 3000;
 const secret = process.env.SECRET || '123456';
 

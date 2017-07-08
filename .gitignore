@@ -1,9 +1,14 @@
 # Node build artifacts
 node_modules
-build/
-.vscode/
-coverage/
 npm-debug.log*
+
+# Build artifacts
+coverage/
+build/
+
+#ide artifacts
+.vscode/
+.idea
 
 # Local development
 *.env

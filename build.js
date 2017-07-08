@@ -10,8 +10,9 @@ async function runNpmCommand(command) {
                 return;
             }
 
-            if (stderr) {
-                reject({ error: stderr, out: stdout });
+            let cleanStdErr = cleanErr(stderr);
+            if (cleanStdErr) {
+                reject({ error: cleanStdErr, out: stdout });
                 return;
             }
 
@@ -35,11 +36,19 @@ function formatTime(time) {
     return `${min}m ${secondsLeft}s`;
 }
 
+function cleanErr(stderr) {
+    return (stderr || '').split('\n')
+        .filter(x => x.replace(' ', '').replace('\r', '').length > 0) //clean empty strings
+        .filter(x => !x.startsWith('npm WARN')) //clean npm warnings;
+        .join('\n');
+}
+
 async function build() {
     try {
         await runBuildStep('Fixing style...', 'lint_fix');
         await runBuildStep('Linting...', 'lint');
-        await runBuildStep('Compiling...', 'compile');
+        await runBuildStep('Building server...', 'build_server');
+        await runBuildStep('Building client...', 'build_client');
     } catch (err) {
         process.stdout.write("error\n");
         if (err.out) {

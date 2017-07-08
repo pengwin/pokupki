@@ -2,62 +2,13 @@
 
 <head>
     <title>Pokupki</title>
+    <script src="lib/react.js?v=1"></script>
+    <script src="lib/react-dom.js?v=1"></script>
 </head>
 
 <body>
-    Test
-    <button>Insert</button>
+    <div id="root"></div>
 </body>
 
-<script>
-    fetch('/api/login', {
-        method: 'post',
-        headers: {
-            "Content-type": "application/json"
-        },
-        body: JSON.stringify({ name: 'default2', password: 'password' })
-    })
-        .then(res => res.json())
-        .then(function (data) {
-            console.log(data.token);
-
-            document.querySelector('button').addEventListener('click', () => click());
-
-            function click() {
-                fetch('/api/event', {
-                    method: 'post',
-                    headers: {
-                        "Content-type": "application/json",
-                        "authorization": data.token
-                    },
-                    body: JSON.stringify({ type: 'test', version: '1', payload: { q: 2 } })
-                })
-                    .then(res => res.json())
-                    .then(function (data) {
-                        console.log('Request succeeded with JSON response', data);
-                    })
-                    .catch(function (error) {
-                        console.log('Request failed', error);
-                    });
-            }
-
-            return fetch('/api/events', {
-                method: 'get',
-                headers: {
-                    "authorization": data.token
-                }
-            });
-        }).then(function (response) {
-            return response.json();
-        })
-        .then(function (events) {
-            let evenstHtml = events.map(x => `<tr><td>${x.id}</td><td>${x.type}</td><td>${x.version}</td><td>${JSON.stringify(x.payload)}</td><td>${x.created}</td>`).join('\n');
-            let table = document.createElement('div');
-            table.innerHTML = `<table><thead><tr><th>id</th><th>type</th><th>version</th><th>payload</th><th>created</th></tr></thead><tbody>${evenstHtml}</tbody></table>`;
-            document.body.appendChild(table);
-        })
-        .catch(alert);
-
-</script>
 
 </html>
