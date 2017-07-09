@@ -1,5 +1,5 @@
-import { actionCreatorFactory } from '../actionCreatorFactory';
+import { createActionFactory } from '../actionCreatorFactory';
 
-export const setToken = actionCreatorFactory<string>('app:setToken');
-export const redirectToLogin = actionCreatorFactory<null>('app:redirectToLogin');
-export const login = actionCreatorFactory<null>('app:login');
+export const setToken = createActionFactory<string>('app:setToken');
+export const redirectToLogin = createActionFactory<null>('app:redirectToLogin');
+export const login = createActionFactory<null>('app:login');

@@ -6,7 +6,7 @@ interface ActionCreator<T> {
     readonly type: string;
 }
 
-export function actionCreatorFactory<T>(type: string, version: string = '1'): ActionCreator<T> {
+export function createActionFactory<T>(type: string, version: string = '1'): ActionCreator<T> {
     const actionCreator: any = (payload: T) => ({ type, payload, version });
     // tslint:disable-next-line:no-expression-statement
     actionCreator.type = type;

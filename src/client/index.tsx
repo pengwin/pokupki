@@ -23,7 +23,7 @@ const getEvent = () => ({ type: 'test', version: '1', payload: { q: 2 } });
 
 const render = (storeInstance: Store<{}>) => (
     <Provider store={storeInstance}>
-        <App listName={''} list={[]}/>
+        <App listName={''} list={[]} />
     </Provider>
 );
 
@@ -35,7 +35,7 @@ const startApp = async () => {
 
     const store = storeFactory();
     const action = store.dispatch(actions.auth.login(null));
-    const events = (await getAllEvents(token)).map((event: any) => store.dispatch({...event, fromServer: true}));
+    const events = (await getAllEvents(token)).map((event: any) => store.dispatch({ ...event, fromServer: true }));
     const app = render(store);
 
     return ReactDOM.render(app, document.getElementById('root'));

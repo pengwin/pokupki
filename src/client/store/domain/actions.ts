@@ -1,1 +1,1 @@
-export { createShoppingList, createShoppingListItem } from './shoppingList/actions';
+export { addShoppingListItem } from './shoppingList/actions';

@@ -1,11 +1,17 @@
 // tslint:disable:no-expression-statement
 
+import * as moment from 'moment';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { Logger } from '../utils/logger';
 import { actions } from './store';
 import { ShoppingList } from './store/domain/shoppingList/shoppingList';
 import { RootState } from './store/rootState';
+
+// tslint:disable-next-line:no-var-requires
+const styles: any = require('./app.css');
+const logging = Logger.info('qq', styles);
 
 interface AppProps {
     readonly listName: string;
@@ -13,13 +19,12 @@ interface AppProps {
 }
 
 interface DispatchProps {
-    readonly onAddList: (name: string) => any;
-    readonly onAddListItem: (parentId: string, text: string) => any;
+    readonly onAddListItem: (text: string) => any;
 }
 
 interface AppState {
-    // tslint:disable-next-line:readonly-keyword
-    listNameValue: string;
+    readonly listNameValue: string;
+    readonly addItemEditMode: boolean;
 }
 
 class AppComponent extends React.Component<AppProps & DispatchProps, AppState> {
@@ -28,41 +33,53 @@ class AppComponent extends React.Component<AppProps & DispatchProps, AppState> {
     constructor(props?: AppProps & DispatchProps, context?: any) {
         super(props);
         this.state = {
-            listNameValue: this.props.listName
+            listNameValue: this.props.listName,
+            addItemEditMode: false
         };
     }
 
-    public handleChange(event: any) {
-        const value = event.target.value;
+    public handleChange(event: React.FormEvent<HTMLInputElement>) {
+        event.preventDefault();
+        const value = (event.target as any).value;
         this.setState({ listNameValue: value });
     }
 
-    public addList(event: any) {
+    public handleKey(event: React.KeyboardEvent<HTMLInputElement>) {
         event.preventDefault();
-
-        if (!this.state.listNameValue) {
-            return;
-        }
-
-        if (this.props.onAddList) {
-            this.props.onAddList(this.state.listNameValue);
+        if (event.key === 'Enter') {
+            if (this.props.onAddListItem) {
+                this.props.onAddListItem(this.state.listNameValue);
+                this.setState({ listNameValue: '' });
+            }
         }
     }
 
-    public addListItem(event: any, parentId: string) {
-        event.preventDefault();
-        if (this.props.onAddListItem) {
-            this.props.onAddListItem(parentId, 'qq');
-        }
-    }
-
+    // <input type={'text'} value={this.state.listNameValue} onChange={(e) => this.handleChange(e)} />
     public render() {
-        return (<div>
-            <h1>Hello</h1>
-            <input type={'text'} value={this.state.listNameValue} onChange={(e) => this.handleChange(e)} />
-            <button onClick={(e) => this.addList(e)}>Добавить</button>
+        return (<div className={styles.app}>
+            {this.today()}
+            Купить <input value={this.state.listNameValue} className={styles.listItemText} type={'text'} onChange={(e) => this.handleChange(e)} onKeyUp={(e) => this.handleKey(e)}/>
             {this.renderList()}
         </div>);
+    }
+
+    private today() {
+        moment.locale('ru');
+        const now = moment().format('DD MMM YYYY');
+        return (
+            <h2>{now}</h2>
+        );
+    }
+
+    private editInPlace() {
+        if (!this.state.addItemEditMode) {
+            return null;
+        }
+        return (
+            <li>
+                <input type={'text'} />
+            </li>
+        );
     }
 
     private renderList() {
@@ -73,8 +90,7 @@ class AppComponent extends React.Component<AppProps & DispatchProps, AppState> {
             <ul>
                 {this.props.list.map(x => (
                     <li key={x.id}>
-                        <p>{x.name}</p>
-                        <button onClick={(e) => this.addListItem(e, x.id)}>Add</button>
+                        <p>{x.date.format('DD-MM-YYYY')}</p>
                         <ul>
                             {x.items.map(i => (<li key={i.id}>{i.text}</li>))}
                         </ul>
@@ -94,9 +110,8 @@ const mapStateToProps = (state: RootState, ownProps: AppProps): AppProps => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        onAddList: (name: string) => dispatch(actions.domain.createShoppingList({ name })),
-        onAddListItem: (parentId: string, text: string) =>
-            dispatch(actions.domain.createShoppingListItem({ text, parentId }))
+        onAddListItem: (text: string) =>
+            dispatch(actions.domain.addShoppingListItem({ text }))
     };
 };
 

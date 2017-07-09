@@ -1,4 +1,4 @@
-import { actionCreatorFactory } from '../actionCreatorFactory';
+import { createActionFactory } from '../actionCreatorFactory';
 
-export const showError = actionCreatorFactory<string>('ui:error');
-export const setError = actionCreatorFactory<string>('ui:setError');
+export const showError = createActionFactory<string>('ui:error');
+export const setError = createActionFactory<string>('ui:setError');

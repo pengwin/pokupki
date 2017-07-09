@@ -1,26 +1,27 @@
 import { Action } from '../../action';
-import { actionCreatorFactory } from '../../actionCreatorFactory';
+import { createActionFactory } from '../../actionCreatorFactory';
 
-import { uuidv4 } from '../../../../utils/guid';
 import { ShoppingList } from './shoppingList';
 import { ShoppingListItem } from './shoppingListItem';
 
-interface NewShoppingList {
-    readonly id?: string;
-    readonly name: string;
-}
-
-interface NewShoppingListItem {
-    readonly id?: string;
-    readonly parentId: string;
+export interface NewShoppingListItem {
     readonly text: string;
+    readonly parentId?: number;
 }
 
-export type NewShoppingListAction = Action<NewShoppingList>;
+export interface NewShoppingListItemEvent {
+    readonly id: string;
+    readonly text: string;
+    readonly parentId: number;
+    readonly utcTimestamp: number;
+}
+
+export interface DeleteShoppingListItem {
+    readonly id: string;
+    readonly parentId?: number;
+}
+
 export type NewShoppingListItemAction = Action<NewShoppingListItem>;
 
-export const createShoppingList = actionCreatorFactory<NewShoppingList>('domain:createShoppingList');
-export const addShoppingList = actionCreatorFactory<ShoppingList>('internal:domain:addShoppingList');
-
-export const createShoppingListItem = actionCreatorFactory<NewShoppingListItem>('domain:createShoppingListItem');
-export const addShoppingListItem = actionCreatorFactory<ShoppingListItem>('internal:domain:addShoppingListItem');
+export const addShoppingListItem = createActionFactory<NewShoppingListItem>('domain:shopping-list-item:add');
+export const addShoppingListItemEvent = createActionFactory<NewShoppingListItemEvent>('event:shopping-list-item:add');

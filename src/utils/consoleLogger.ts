@@ -22,4 +22,15 @@ export class ConsoleLogger {
         console.info(message, data);
         return this;
     }
+
+    public warn(message: string | object, data?: any) {
+        if (!data) {
+            // tslint:disable-next-line:no-expression-statement
+            console.warn(message);
+            return this;
+        }
+        // tslint:disable-next-line:no-expression-statement
+        console.warn(message, data);
+        return this;
+    }
 }

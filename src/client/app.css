@@ -1,0 +1,12 @@
+:local(.app) {
+        font-size: 3vh;
+}
+
+:local(.listItemText) {
+        font-size: 3vh;
+        height: 1.5em;
+        width: 12em;
+        border: 0.05em solid grey;
+}
+
+

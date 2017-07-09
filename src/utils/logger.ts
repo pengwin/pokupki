@@ -10,4 +10,8 @@ export class Logger {
     public static info(message: string | object, data?: any) {
         return loggerInstance.info(message, data);
     }
+
+    public static warn(message: string | object, data?: any) {
+        return loggerInstance.warn(message, data);
+    }
 }

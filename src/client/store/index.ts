@@ -1,11 +1,11 @@
-import { login } from './auth/actions';
-import { createShoppingList, createShoppingListItem } from './domain/actions';
-import { showError } from './ui/actions';
+import * as auth from './auth/actions';
+import * as domain from './domain/actions';
+import * as ui from './ui/actions';
 
 const actions = {
-    auth: { login },
-    domain: { createShoppingList, createShoppingListItem },
-    ui: { showError }
+    auth,
+    domain,
+    ui
 };
 
 export { actions };

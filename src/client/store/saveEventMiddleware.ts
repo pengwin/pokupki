@@ -16,7 +16,7 @@ const mapActionToEvent = (action: any) => {
 };
 
 const saveEventMiddleWare = (store: Store<RootState>) => (next: any) => (action: Action<any>) => {
-    if (action.fromServer || !action.type || !action.type.startsWith('domain:')) {
+    if (action.fromServer || !action.type || !action.type.startsWith('event:')) {
         return next(action);
     }
 

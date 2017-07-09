@@ -22,8 +22,8 @@ module.exports = {
 
     module: {
         rules: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: "ts-loader" },
+            { test: /\.css$/, use: [ 'style-loader', 'css-loader' ] },
+            { test: /\.tsx?$/, loader: 'ts-loader' },
 
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
@@ -36,7 +36,8 @@ module.exports = {
     // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
         "react": "React",
-        "react-dom": "ReactDOM"
+        "react-dom": "ReactDOM",
+        "moment": "moment"
     },
     plugins: [
         new CopyWebpackPlugin([
@@ -49,8 +50,12 @@ module.exports = {
                 to: 'lib/react.js'
             },
             {
-                from: 'node_modules/react-dom/dist/react-dom.js',
-                to: 'lib/react-dom.js'
+                from: 'node_modules/react/dist/react.js',
+                to: 'lib/react.js'
+            },
+            {
+                from: 'node_modules/moment/locale/ru.js',
+                to: 'lib/moment-ru.js'
             }
         ]),
         new HtmlWebpackPlugin({
