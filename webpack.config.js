@@ -49,9 +49,13 @@ module.exports = {
                 from: 'node_modules/react/dist/react.js',
                 to: 'lib/react.js'
             },
+            {		             
+                 from: 'node_modules/react-dom/dist/react-dom.js',
+                 to: 'lib/react-dom.js'
+            },
             {
-                from: 'node_modules/react/dist/react.js',
-                to: 'lib/react.js'
+                from: 'node_modules/moment/moment.js',
+                to: 'lib/moment.js'
             },
             {
                 from: 'node_modules/moment/locale/ru.js',

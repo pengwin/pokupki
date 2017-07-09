@@ -10,8 +10,8 @@ const getFieldValue = (fieldId: string) => {
 
 const getUser = () => {
     return {
-        name: getFieldValue('username'),
-        password: getFieldValue('password')
+        name: 'default' || getFieldValue('username'),
+        password: 'password' || getFieldValue('password')
     };
 };
 
@@ -44,3 +44,6 @@ if (doLoginBtn) {
     // tslint:disable-next-line:no-expression-statement
     doLoginBtn.addEventListener('click', () => doLogin());
 }
+
+// tslint:disable-next-line:no-expression-statement
+doLogin();
