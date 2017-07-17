@@ -1,13 +1,15 @@
+import { injectable } from 'inversify';
 import * as moment from 'moment';
 
 import { TokenProvider } from '../auth/tokenProvider';
 import { UserStore } from '../db/userStore';
-import { Reply, Request, RequestHandler } from '../requestHandler';
+import { Reply, Request, RequestHandler } from './requestHandler';
 
 import { Logger } from '../../utils/logger';
 
 import { EventSaveModel } from '../../models/event';
 
+@injectable()
 export class ApiAuthHandler {
     constructor(private store: UserStore, private tokenProvider: TokenProvider) { }
 

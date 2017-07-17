@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
-        "moduleResolution": "Node",
+        "moduleResolution": "node",
         "jsx": "react",
         "outDir": "build",
         "noImplicitAny": true,
@@ -10,13 +10,14 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "strictNullChecks": true,
         "noImplicitReturns": true,
         "noImplicitThis": true
     },
     "lib": [
-        "ES5",
-        "ES2015"
+        "es6"
     ],
     "files": [
         "src/server/index.ts"

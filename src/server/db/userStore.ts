@@ -1,6 +1,8 @@
 import { User } from '../../models/user';
 import { Database } from './database';
 
+import { injectable } from 'inversify';
+
 function getUserByIdQuery(userId: string) {
     return {
         text: 'SELECT * FROM users WHERE id = $1;',
@@ -15,6 +17,7 @@ function getUserByUsernamePasswordQuery(username: string, plainPassword: string)
     };
 }
 
+@injectable()
 export class UserStore {
     constructor(private db: Database) { }
 

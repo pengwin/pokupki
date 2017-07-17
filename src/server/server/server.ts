@@ -1,9 +1,12 @@
 import * as Hapi from 'hapi';
 import * as path from 'path';
 
-import { Logger } from '../utils/logger';
-import { AuthProvider } from './auth/authProvider';
-import { HandlerMetaData, RequestHandler, RequestHandlerFunction } from './requestHandler';
+import { injectable } from 'inversify';
+
+import { Logger } from '../../utils/logger';
+import { AuthProvider } from '../auth/authProvider';
+import { Configuration } from '../configuration';
+import { HandlerMetaData, RequestHandler, RequestHandlerFunction } from '../handlers';
 
 interface Request {
     readonly url: string;
@@ -12,10 +15,11 @@ interface Request {
     readonly headers?: any;
 }
 
+@injectable()
 export class HapiServer {
     private server: Hapi.Server;
 
-    constructor(port: number) {
+    constructor(private configuration: Configuration) {
         // tslint:disable-next-line:no-expression-statement
         this.server = new Hapi.Server({
             debug: {
@@ -24,16 +28,16 @@ export class HapiServer {
             }
         });
         // tslint:disable-next-line:no-expression-statement
-        this.server.connection({ port });
+        this.server.connection({ port: this.configuration.server.port });
     }
 
-    public enableStaticServing(staticPath: string) {
+    public enableStaticServing() {
         const staticHandler: RequestHandler = {
             method: 'GET',
             url: '/{param*}',
             handler: {
                 directory: {
-                    path: staticPath,
+                    path: this.configuration.server.staticContentPath,
                     index: true
                 }
             } as any as RequestHandlerFunction,

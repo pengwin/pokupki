@@ -1,15 +1,19 @@
 import * as Hapi from 'hapi';
 import * as hapiAuthJwt2 from 'hapi-auth-jwt2';
 
+import { injectable } from 'inversify';
+
 import * as moment from 'moment';
 import { User } from '../../models/user';
+import { Configuration } from '../configuration';
 import { UserStore } from '../db/userStore';
-import { Request } from '../requestHandler';
+import { Request } from '../handlers';
 
 type validateCallback = (err: Error | null, isValid: boolean, creadentials?: any) => void;
 
+@injectable()
 export class AuthProvider {
-    constructor(private userStore: UserStore, private secret: string) { }
+    constructor(private userStore: UserStore, private configuration: Configuration) { }
 
     public registerAuth(server: Hapi.Server) {
         return server.register({ register: require('hapi-auth-jwt2') }).then(err => {
@@ -26,7 +30,7 @@ export class AuthProvider {
 
     private get authSettings(): hapiAuthJwt2.Options {
         return {
-            key: this.secret,
+            key: this.configuration.auth.secret,
             validateFunc: this.validate.bind(this),
             verifyOptions: { algorithms: ['HS256'] },
             headerKey: 'authorization',

@@ -1,6 +1,8 @@
 import { Event, EventSaveModel } from '../../models/event';
 import { Database } from './database';
 
+import { injectable } from 'inversify';
+
 function insertEventQuery(event: EventSaveModel) {
     return {
         text: 'INSERT INTO events(type, version, payload, user_id) VALUES($1, $2, $3, $4);',
@@ -16,6 +18,7 @@ function getAllEventsQuery(userId: string) {
     };
 }
 
+@injectable()
 export class EventStore {
     constructor(private db: Database) { }
 

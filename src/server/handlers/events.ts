@@ -1,10 +1,13 @@
+import { injectable } from 'inversify';
+
 import { EventStore } from '../db/eventStore';
-import { Reply, Request, RequestHandler } from '../requestHandler';
+import { Reply, Request, RequestHandler } from '../handlers';
 
 import { Logger } from '../../utils/logger';
 
 import { EventSaveModel } from '../../models/event';
 
+@injectable()
 export class ApiEventHandler {
     constructor(private store: EventStore) { }
 

@@ -22,6 +22,20 @@ const createShoppingListItemEpic = (action$: any, store: Store<RootState>) =>
     action$.ofType(actions.addShoppingListItem.type)
         .map((a: actions.NewShoppingListItemAction) => addShoppingListItem(a, store));
 
+const deleteShoppingListItemEpic = (action$: any, store: Store<RootState>) =>
+    action$.ofType(actions.deleteShoppingListItem.type)
+        .map((a: actions.NewShoppingListItemAction) => actions.deleteShoppingListItemEvent({
+            ...action$.payload,
+            parentId: action$.payload.parentId || 0}));
+
+const buyShoppingListItemEpic = (action$: any, store: Store<RootState>) =>
+    action$.ofType(actions.buyShoppingListItem.type)
+        .map((a: actions.NewShoppingListItemAction) => actions.buyShoppingListItemEvent({
+            ...action$.payload,
+            utcTimestamp: Date.now(),
+            currency: 'RUB'
+        }));
+
 export const shoppingListEpic = combineEpics(
     createShoppingListItemEpic
 );

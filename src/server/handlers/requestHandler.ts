@@ -1,3 +1,5 @@
+import { injectable } from 'inversify';
+
 type HTTP_METHODS = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
 
 interface Creadentials {
@@ -32,9 +34,10 @@ export interface HandlerMetaData {
     readonly auth?: string;
 }
 
-export interface RequestHandler {
-    readonly method: HTTP_METHODS;
-    readonly url: string;
-    readonly handler: RequestHandlerFunction;
-    readonly metaData: HandlerMetaData;
+@injectable()
+export abstract class RequestHandler {
+    public readonly method: HTTP_METHODS;
+    public readonly url: string;
+    public readonly handler: RequestHandlerFunction;
+    public readonly metaData: HandlerMetaData;
 }

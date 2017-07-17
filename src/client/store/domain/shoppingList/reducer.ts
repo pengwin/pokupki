@@ -6,7 +6,7 @@ import { ShoppingListItem } from './shoppingListItem';
 import { ShoppingListState } from './state';
 import { initialState } from './state';
 
-import { addShoppingListItemEvent, NewShoppingListItemEvent } from './actions';
+import * as actions from './actions';
 
 import { Logger } from '../../../../utils/logger';
 
@@ -16,12 +16,12 @@ interface Handlers<S> {
     readonly [type: string]: Handler<S>;
 }
 
-const mapNewShoppingItem = (payload: NewShoppingListItemEvent): ShoppingListItem => ({
+const mapNewShoppingItem = (payload: actions.NewShoppingListItemEvent): ShoppingListItem => ({
     id: payload.id,
     text: payload.text
 });
 
-const getListParams = (payload: NewShoppingListItemEvent) => {
+const getListParams = (payload: actions.NewShoppingListItemEvent) => {
     const date = moment(payload.utcTimestamp);
     const listId = `${date.format('DD-MM-YYYY')}_${payload.parentId}`;
     return {
@@ -30,12 +30,13 @@ const getListParams = (payload: NewShoppingListItemEvent) => {
     };
 };
 
-const getShoppingList = (state: ShoppingListState, payload: NewShoppingListItemEvent) => {
+const getShoppingList = (state: ShoppingListState, payload: actions.NewShoppingListItemEvent) => {
     const params = getListParams(payload);
     const newItem = mapNewShoppingItem(payload);
     const oldList = state.lists.find(x => x.id === params.listId);
     const list = oldList || { items: [], id: params.listId, date: params.date };
     return {
+        newItem,
         list: Object.assign({},
             list, {
                 items: list.items.concat(newItem)
@@ -45,7 +46,7 @@ const getShoppingList = (state: ShoppingListState, payload: NewShoppingListItemE
 };
 
 const handlers: Handlers<ShoppingListState> = {
-    [addShoppingListItemEvent.type]: (state: ShoppingListState, action: Action<NewShoppingListItemEvent>) => {
+    [actions.addShoppingListItemEvent.type]: (state: ShoppingListState, action: Action<actions.NewShoppingListItemEvent>) => {
         const newList = getShoppingList(state, action.payload);
         const lists = newList.hasOld ? state.lists.map(shoppingList => {
             if (shoppingList.id === newList.list.id) {
@@ -53,7 +54,7 @@ const handlers: Handlers<ShoppingListState> = {
             }
             return shoppingList;
         }) : state.lists.concat(newList.list);
-        return Object.assign({}, state, { lists });
+        return Object.assign({}, state, { lists, items: state.items.concat([newList.newItem]) });
     }
 };
 

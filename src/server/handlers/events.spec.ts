@@ -1,36 +1,43 @@
 /* tslint:disable:no-expression-statement */
+/* tslint:disable:no-unused-expression */
+import { assert, expect, use } from 'chai';
+import { stub } from 'sinon';
+import * as sinonChai from 'sinon-chai';
 
 import { EventStore } from '../db/eventStore';
 import { ApiEventHandler } from './events';
 
-function mockStore(allEvents) {
+use(sinonChai);
+
+function mockStore(allEvents: any) {
     return {
-        getAll: jest.fn().mockReturnValue(Promise.resolve(allEvents)),
-        insert: jest.fn().mockReturnValue(Promise.resolve([]))
+        getAll: stub().returns(Promise.resolve(allEvents)),
+        insert: stub().returns(Promise.resolve([]))
     };
 }
 
 test('should expose get all handler', async () => {
     const store = mockStore as any as EventStore;
     const handler = new ApiEventHandler(store);
-    expect(handler.allHandler).toBeDefined();
-    expect(handler.allHandler.metaData).toBeDefined();
-    expect(handler.allHandler.handler).toBeInstanceOf(Function);
+
+    expect(handler.allHandler).to.be;
+    expect(handler.allHandler.metaData).to.be;
+    expect(handler.allHandler.handler).to.be.an.instanceof(Function);
 });
 
 test('should expose insert handler', async () => {
     const store = mockStore as any as EventStore;
     const handler = new ApiEventHandler(store);
-    expect(handler.insertHandler).toBeDefined();
-    expect(handler.insertHandler.metaData).toBeDefined();
-    expect(handler.insertHandler.handler).toBeInstanceOf(Function);
+    expect(handler.insertHandler).to.be;
+    expect(handler.insertHandler.metaData).to.be;
+    expect(handler.insertHandler.handler).to.be.an.instanceof(Function);
 });
 
 test('should response on insert', async () => {
     const store = mockStore(null) as any as EventStore;
     const handler = new ApiEventHandler(store);
-    const replyMock: any = (error) => fail(error);
-    replyMock.response = (data) => data;
+    const replyMock: any = (error: any) => assert.fail(error);
+    replyMock.response = (data: any) => data;
     const result: any = await handler.insertHandler.handler({
         auth: {
             credentials: {
@@ -43,5 +50,5 @@ test('should response on insert', async () => {
             payload: { q: 1 }
         }
     }, replyMock);
-    expect(result).toBeDefined();
+    expect(result).to.be;
 });
