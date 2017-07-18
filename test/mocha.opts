@@ -2,4 +2,5 @@
 --require source-map-support/register
 --require ts-node/register
 --require reflect-metadata
+--reporter mocha-circleci-reporter
 ./src/**/*.spec.ts

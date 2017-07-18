@@ -5,6 +5,7 @@ npm-debug.log*
 # Build artifacts
 coverage/
 build/
+test-results.xml
 
 #ide artifacts
 .vscode/

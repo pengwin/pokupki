@@ -49,6 +49,7 @@
     "inversify": "4.2.0",
     "jsonwebtoken": "7.4.1",
     "mocha": "3.4.2",
+    "mocha-circleci-reporter": "0.0.2",
     "mocha-typescript": "1.1.7",
     "moment": "2.18.1",
     "nyc": "11.0.3",
