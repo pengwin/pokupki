@@ -4,7 +4,7 @@ async function runNpmCommand(command) {
     //const { stdout, stderr } = await exec(`npm run ${command}`);
     return new Promise((resolve, reject) => {
         const start = process.hrtime();
-        exec(`npm run ${command}`, (error, stdout, stderr) => {
+        exec(`yarn run ${command}`, (error, stdout, stderr) => {
             if (error) {
                 reject({ error: stderr, out: stdout });
                 return;
