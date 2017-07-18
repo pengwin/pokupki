@@ -1,3 +1,3 @@
-web: npm start
-migrate: npm run migrate
-test: npm test
+web: yarn start
+migrate: yarn run migrate
+test: yarn test

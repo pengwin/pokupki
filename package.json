@@ -6,7 +6,7 @@
     "node": "8.1.3"
   },
   "scripts": {
-    "post_install": "npm run build && npm test",
+    "postinstall": "yarn build && npm test",
     "start": "node ./build/server/index.js",
     "add_migration": "db-migrate create",
     "add_sql_migration": "db-migrate create --sql-file",
