@@ -3,4 +3,5 @@
 --require ts-node/register
 --require reflect-metadata
 --reporter mocha-circleci-reporter
+--reporter-options mochaFile=./test_artifacts/test-results.xml
 ./src/**/*.spec.ts
